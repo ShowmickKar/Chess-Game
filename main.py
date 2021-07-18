@@ -13,17 +13,6 @@ def render_graphics(window, board):
     pygame.display.update()
 
 
-def get_cell_location(position, board):
-    x, y = position[0] - 20, position[1] - 20
-    for row in board.grid:
-        for cell in row:
-            if (
-                cell.row * cell.size <= y <= cell.row * cell.size + cell.size
-                and cell.column * cell.size <= x <= cell.column * cell.size + cell.size
-            ):
-                return cell
-
-
 def main():
     window = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Online Chess Game")
@@ -38,7 +27,7 @@ def main():
             if event.type == pygame.MOUSEMOTION:
                 pass
             if event.type == pygame.MOUSEBUTTONDOWN:
-                cell = get_cell_location(pygame.mouse.get_pos(), board)
+                cell = board.getCellLocation(pygame.mouse.get_pos())
                 if event.button == 1:
                     board.selectCell(cell)
                 if event.button == 3:
