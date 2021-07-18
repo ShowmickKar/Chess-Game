@@ -1,4 +1,3 @@
-import pygame
 from board_cell import BoardCell
 
 
@@ -6,10 +5,10 @@ class ChessBoard:
     board_blueprint = [
         ["B-r", "B-k", "B-b", "B-q", "B-K", "B-b", "B-k", "B-r"],
         ["B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p"],
+        ["", "", "", "", "", "", "B-p", ""],
         ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
+        ["", "W-p", "", "", "B-b", "", "", ""],
+        ["", "", "W-p", "", "", "", "", ""],
         ["W-p", "W-p", "W-p", "W-p", "W-p", "W-p", "W-p", "W-p"],
         ["W-r", "W-k", "W-b", "W-K", "W-q", "W-b", "W-k", "W-r"],
     ]
@@ -28,13 +27,21 @@ class ChessBoard:
     def place(self, current_position, new_position):
         pass
 
+    def getCellLocation(self, position):
+        x, y = position[0] - 20, position[1] - 20
+        for row in self.grid:
+            for cell in row:
+                if (
+                    cell.row * cell.size <= y <= cell.row * cell.size + cell.size
+                    and cell.column * cell.size
+                    <= x
+                    <= cell.column * cell.size + cell.size
+                ):
+                    return cell
+
     def selectCell(self, cell):
-        # if cell != None:
-        #     moves = cell.piece.moves
         for row in self.grid:
             for board_cell in row:
-                # if cell.row == board_cell.row and cell.column == board_cell.column and (cell.row, cell.column) in moves:
-                #     self.place()
                 if board_cell.selected:
                     board_cell.selected = False
                     if cell != None and cell.piece:
