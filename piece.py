@@ -29,6 +29,12 @@ class Piece:
 
 
 class King(Piece):
+    def isCastlingAvailable(self):
+        pass
+
+    def isChecked(self):
+        pass
+
     def findAllMoves(self, board):  # also check for castling and checks
         moves = []
         if self.row - 1 >= 0:
@@ -267,12 +273,8 @@ class Pawn(Piece):
         moves = []
         if self.color == "white":
             if self.row == 6:
-                if (
-                    board[5][self.column].piece != None
-                    and board[5][self.column].piece.color == "black"
-                ) or (
+                if (board[5][self.column].piece != None) or (
                     board[4][self.column].piece != None
-                    and board[4][self.column].piece.color == "black"
                 ):
                     pass
                 else:
@@ -295,12 +297,8 @@ class Pawn(Piece):
                         moves.append((self.row - 1, self.column - 1))
         else:
             if self.row == 1:
-                if (
-                    board[2][self.column].piece != None
-                    and board[2][self.column].piece.color == "white"
-                ) or (
+                if (board[2][self.column].piece != None) or (
                     board[3][self.column].piece != None
-                    and board[3][self.column].piece.color == "white"
                 ):
                     pass
                 else:
