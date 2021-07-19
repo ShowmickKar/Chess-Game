@@ -3,14 +3,14 @@ from board_cell import BoardCell
 
 class ChessBoard:
     board_blueprint = [
-        ["B-r", "B-k", "B-b", "B-q", "B-K", "B-b", "B-k", "B-r"],
+        ["B-r", "B-k", "B-b", "B-K", "B-q", "B-b", "B-k", "B-r"],
         ["B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p"],
-        ["", "", "", "", "", "", "B-p", ""],
         ["", "", "", "", "", "", "", ""],
-        ["", "W-p", "", "", "B-b", "", "", ""],
-        ["", "", "W-p", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
         ["W-p", "W-p", "W-p", "W-p", "W-p", "W-p", "W-p", "W-p"],
-        ["W-r", "W-k", "W-b", "W-K", "W-q", "W-b", "W-k", "W-r"],
+        ["W-r", "W-k", "W-b", "W-q", "W-K", "W-b", "W-k", "W-r"],
     ]
 
     def __init__(self, width):
@@ -40,7 +40,19 @@ class ChessBoard:
                     return cell
 
     def selectCell(self, cell):
-        for row in self.grid:
+        # if cell == None:
+        #     return
+        for row in self.grid:  # checking for movement options
+            for board_cell in row:
+                if board_cell.selected:
+                    selected = (cell.row, cell.column)
+                    moves = board_cell.piece.moves
+                    if selected in moves:  # move or capture the piece
+                        board_cell.piece.move(board_cell, cell, self.grid)
+                        self.unselectCell()
+                        return
+
+        for row in self.grid:  # Checking for selection options
             for board_cell in row:
                 if board_cell.selected:
                     board_cell.selected = False
