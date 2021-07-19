@@ -3,7 +3,7 @@ from board_cell import BoardCell
 
 class ChessBoard:
     board_blueprint = [
-        ["B-r", "B-k", "B-b", "B-K", "B-q", "B-b", "B-k", "B-r"],
+        ["B-r", "B-k", "B-b", "B-q", "B-K", "B-b", "B-k", "B-r"],
         ["B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p"],
         ["", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", ""],
@@ -23,9 +23,16 @@ class ChessBoard:
             for i in range(8)
         ]
         self.current = None
+        self.turn = "white"
 
     def place(self, current_position, new_position):
         pass
+
+    def switchTurn(self):
+        if self.turn == "white":
+            self.turn = "black"
+        else:
+            self.turn = "white"
 
     def getCellLocation(self, position):
         x, y = position[0] - 20, position[1] - 20
@@ -50,16 +57,24 @@ class ChessBoard:
                     if selected in moves:  # move or capture the piece
                         board_cell.piece.move(board_cell, cell, self.grid)
                         self.unselectCell()
+                        self.switchTurn()
                         return
 
         for row in self.grid:  # Checking for selection options
             for board_cell in row:
                 if board_cell.selected:
                     board_cell.selected = False
-                    if cell != None and cell.piece:
+                    if board_cell == cell:
+                        self.unselectCell()
+                        return
+                    if (
+                        cell != None
+                        and cell.piece != None
+                        and cell.piece.color == self.turn
+                    ):
                         cell.selected = True
                     return
-        if cell != None and cell.piece:
+        if cell != None and cell.piece != None and cell.piece.color == self.turn:
             cell.selected = True
 
     def unselectCell(self):
