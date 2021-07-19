@@ -12,6 +12,9 @@ class Piece:
         self.moves = []
 
     def showAllMoves(self, window, board):
+        """
+        Show all possible moves of a currently selected piece
+        """
         self.moves = self.findAllMoves(board)
         color = (0, 0, 255) if self.color == "white" else (255, 0, 0)
         for move in self.moves:
@@ -312,10 +315,8 @@ class Pawn(Piece):
                 else:
                     moves.append((self.row + 2, self.column))
 
-                if self.row + 1 < 8 and (
-                    board[self.row + 1][self.column].piece == None
-                ):
-                    moves.append((self.row + 1, self.column))
+            if self.row + 1 < 8 and (board[self.row + 1][self.column].piece == None):
+                moves.append((self.row + 1, self.column))
             if self.row + 1 < 8:  # diagonal attack
                 if self.column + 1 < 8:
                     if (
