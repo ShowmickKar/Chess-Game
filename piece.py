@@ -17,12 +17,14 @@ class Piece:
         for move in self.moves:
             pygame.draw.circle(window, color, (move[1] * 70 + 56, move[0] * 70 + 56), 9)
 
-    def move(self):  # for moving and capturing pieces
+    def move(self, current_cell, new_cell, board):  # for moving and capturing pieces
         """
         Move the piece if it's a valid move and no possibility of checkmate
         look for castling
         """
-        pass
+        self.row, self.column = new_cell.row, new_cell.column
+        new_cell.piece = self
+        current_cell.piece = None
 
     def render(self, window):
         window.blit(self.image, (self.column * 70 + 20, self.row * 70 + 18))
@@ -61,7 +63,13 @@ class King(Piece):
                 moves.append((self.row - 1, self.column + 1))
             if self.row + 1 < 8:
                 moves.append((self.row + 1, self.column + 1))
-        return moves
+        final_moves = []
+        # remove moves if there's a chance of check
+        for move in moves:
+            piece = board[move[0]][move[1]].piece
+            if piece == None or piece.color != self.color:
+                final_moves.append(move)
+        return final_moves
 
 
 class Queen(Piece):
@@ -308,20 +316,18 @@ class Pawn(Piece):
                     board[self.row + 1][self.column].piece == None
                 ):
                     moves.append((self.row + 1, self.column))
-                if self.row + 1 < 8:  # diagonal attack
-                    if self.column + 1 < 8:
-                        if (
-                            board[self.row + 1][self.column + 1].piece != None
-                            and board[self.row + 1][self.column + 1].piece.color
-                            == "white"
-                        ):
-                            moves.append((self.row + 1, self.column + 1))
-                    if self.column - 1 >= 0:
-                        if (
-                            board[self.row + 1][self.column - 1].piece != None
-                            and board[self.row + 1][self.column - 1].piece.color
-                            == "white"
-                        ):
-                            moves.append((self.row + 1, self.column - 1))
+            if self.row + 1 < 8:  # diagonal attack
+                if self.column + 1 < 8:
+                    if (
+                        board[self.row + 1][self.column + 1].piece != None
+                        and board[self.row + 1][self.column + 1].piece.color == "white"
+                    ):
+                        moves.append((self.row + 1, self.column + 1))
+                if self.column - 1 >= 0:
+                    if (
+                        board[self.row + 1][self.column - 1].piece != None
+                        and board[self.row + 1][self.column - 1].piece.color == "white"
+                    ):
+                        moves.append((self.row + 1, self.column - 1))
 
         return moves
