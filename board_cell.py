@@ -1,13 +1,13 @@
 import pygame
-from piece import King
-from piece import Queen
-from piece import Bishop
-from piece import Knight
-from piece import Rook
-from piece import Pawn
+from king import King
+from queen import Queen
+from bishop import Bishop
+from knight import Knight
+from rook import Rook
+from pawn import Pawn
 
-BLACK = (80, 80, 80)
-WHITE = (180, 180, 180)
+WHITE = (240, 240, 255)
+BLACK = (135, 206, 235)
 
 
 class BoardCell:
@@ -52,9 +52,9 @@ class BoardCell:
     def draw(self, window):
         if self.selected:
             if self.piece.color == "white":
-                color = (0, 0, 255)
+                color = (65, 105, 225)
             else:
-                color = (255, 0, 0)
+                color = (222, 49, 99)
             pygame.draw.rect(
                 window,
                 color,
