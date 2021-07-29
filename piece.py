@@ -11,16 +11,60 @@ class Piece:
         )
         self.moves = []
 
-    def showAllMoves(self, window, board):
+    def showAllMoves(self, window, grid):
+        board = grid.grid
         """
         Show all possible moves of a currently selected piece
         """
-        self.moves = self.findAllMoves(board)
-        color = (0, 0, 255) if self.color == "white" else (255, 0, 0)
+        self.moves = []
+        """
+        Remove some possible moves if they will lead to a CHECK
+        """
+        temp_moves = self.findAllMoves(board)
+        for move in temp_moves:
+            current_cell = board[self.row][self.column]
+            new_cell = board[move[0]][move[1]]
+            """
+            Temporarily mutating the board
+            """
+            self.row, self.column = new_cell.row, new_cell.column
+            previous_piece = new_cell.piece  # storing what is currently in the new cell
+            new_cell.piece = self
+            current_cell.piece = None
+            # first find the king's location
+            kings_location = (0, 0)
+            all_possible_opponent_moves = []
+            for row in board:
+                for cell in row:
+                    if cell.piece != None and cell.piece.color == self.color:
+                        piece_type = str(type(cell.piece))
+                        if piece_type == "<class 'king.King'>":
+                            kings_location = (
+                                cell.piece.row,
+                                cell.piece.column,
+                            )
+                            # print("[Alert]: King found")
+                            # print(f"[King's Location]: {kings_location}")
+                    if cell.piece != None and cell.piece.color != self.color:
+                        opponent_moves = cell.piece.findAllMoves(board)
+                        if len(opponent_moves):
+                            all_possible_opponent_moves.extend(opponent_moves)
+            """
+            Reverting the temporary move
+            """
+            self.row, self.column = current_cell.row, current_cell.column
+            current_cell.piece = self
+            new_cell.piece = previous_piece  # restoring the piece if there's any
+            if kings_location not in all_possible_opponent_moves:
+                self.moves.append(move)
+
+        color = (65, 105, 225) if self.color == "white" else (222, 49, 99)
         for move in self.moves:
             pygame.draw.circle(window, color, (move[1] * 70 + 56, move[0] * 70 + 56), 9)
+        return self.moves
 
-    def move(self, current_cell, new_cell, board):  # for moving and capturing pieces
+    def move(self, current_cell, new_cell, grid):  # for moving and capturing pieces
+        board = grid.grid
         """
         Move the piece if it's a valid move and no possibility of checkmate
         look for castling
@@ -28,307 +72,37 @@ class Piece:
         self.row, self.column = new_cell.row, new_cell.column
         new_cell.piece = self
         current_cell.piece = None
+        """
+        If the opposing player is in check, alert that here
+        """
+        all_attacking_positions = []
+        opposing_kings_location = (-1, -1)
+        opposing_player = "black" if self.color == "white" else "white"
+        for row in board:
+            for cell in row:
+                if cell.piece != None:
+                    if cell.piece.color != self.color:
+                        piece_type = str(type(cell.piece))
+                        if piece_type == "<class 'king.King'>":
+                            opposing_kings_location = (
+                                cell.piece.row,
+                                cell.piece.column,
+                            )
+                            # print("[Alert]: Opponent King Found")
+                            # print(
+                            #     f"[Opponent King Location]: {opposing_kings_location}"
+                            # )
+
+                    else:
+                        positions = cell.piece.findAllMoves(board)
+                        if len(positions):
+                            all_attacking_positions.extend(positions)
+        if opposing_kings_location in all_attacking_positions:
+            # print("[Alert]: Check")
+            grid.check = opposing_player
+            grid.check_alert = True
+            return
+        grid.check = None
 
     def render(self, window):
         window.blit(self.image, (self.column * 70 + 20, self.row * 70 + 18))
-
-
-class King(Piece):
-    def isCastlingAvailable(self):
-        pass
-
-    def isChecked(self):
-        pass
-
-    def findAllMoves(self, board):  # also check for castling and checks
-        moves = []
-        if self.row - 1 >= 0:
-            moves.append((self.row - 1, self.column))
-            if self.column - 1 >= 0:
-                moves.append((self.row - 1, self.column - 1))
-            if self.column + 1 < 8:
-                moves.append((self.row - 1, self.column + 1))
-        if self.row + 1 < 8:
-            moves.append((self.row + 1, self.column))
-            if self.column - 1 >= 0:
-                moves.append((self.row + 1, self.column - 1))
-            if self.column + 1 < 8:
-                moves.append((self.row + 1, self.column + 1))
-        if self.column - 1 >= 0:
-            moves.append((self.row, self.column - 1))
-            if self.row - 1 >= 0:
-                moves.append((self.row - 1, self.column - 1))
-            if self.row + 1 < 8:
-                moves.append((self.row + 1, self.row - 1))
-        if self.column + 1 < 8:
-            moves.append((self.row, self.column + 1))
-            if self.row - 1 >= 0:
-                moves.append((self.row - 1, self.column + 1))
-            if self.row + 1 < 8:
-                moves.append((self.row + 1, self.column + 1))
-        final_moves = []
-        # remove moves if there's a chance of check
-        for move in moves:
-            piece = board[move[0]][move[1]].piece
-            if piece == None or piece.color != self.color:
-                final_moves.append(move)
-        return final_moves
-
-
-class Queen(Piece):
-    def findAllMoves(self, board):
-        moves = []
-        i, j = self.row - 1, self.column - 1
-        while i >= 0 and j >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i -= 1
-            j -= 1
-        i, j = self.row + 1, self.column - 1
-        while i < 8 and j >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i += 1
-            j -= 1
-        i, j = self.row + 1, self.column + 1
-        while i < 8 and j < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i += 1
-            j += 1
-        i, j = self.row - 1, self.column + 1
-        while i >= 0 and j < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i -= 1
-            j += 1
-        i, j = self.row - 1, self.column
-        while i >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i -= 1
-        i, j = self.row + 1, self.column
-        while i < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i += 1
-        i, j = self.row, self.column - 1
-        while j >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            j -= 1
-        i, j = self.row, self.column + 1
-        while j < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            j += 1
-        return moves
-
-
-class Bishop(Piece):
-    def findAllMoves(self, board):
-        moves = []
-        i, j = self.row - 1, self.column - 1
-        while i >= 0 and j >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i -= 1
-            j -= 1
-        i, j = self.row + 1, self.column - 1
-        while i < 8 and j >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i += 1
-            j -= 1
-        i, j = self.row + 1, self.column + 1
-        while i < 8 and j < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i += 1
-            j += 1
-        i, j = self.row - 1, self.column + 1
-        while i >= 0 and j < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i -= 1
-            j += 1
-        return moves
-
-
-class Knight(Piece):
-    def findAllMoves(self, board):
-        moves = []
-        if self.row - 1 >= 0:
-            if self.column - 2 >= 0 and (
-                board[self.row - 1][self.column - 2].piece == None
-                or board[self.row - 1][self.column - 2].piece.color != self.color
-            ):
-                moves.append((self.row - 1, self.column - 2))
-            if self.column + 2 < 8 and (
-                board[self.row - 1][self.column + 2].piece == None
-                or board[self.row - 1][self.column + 2].piece.color != self.color
-            ):
-                moves.append((self.row - 1, self.column + 2))
-        if self.row - 2 >= 0:
-            if self.column - 1 >= 0 and (
-                board[self.row - 2][self.column - 1].piece == None
-                or board[self.row - 2][self.column - 1].piece.color != self.color
-            ):
-                moves.append((self.row - 2, self.column - 1))
-            if self.column + 1 < 8 and (
-                board[self.row - 2][self.column + 1].piece == None
-                or board[self.row - 2][self.column + 1].piece.color != self.color
-            ):
-                moves.append((self.row - 2, self.column + 1))
-        if self.row + 1 < 8:
-            if self.column - 2 >= 0 and (
-                board[self.row + 1][self.column - 2].piece == None
-                or board[self.row + 1][self.column - 2].piece.color != self.color
-            ):
-                moves.append((self.row + 1, self.column - 2))
-            if self.column + 2 < 8 and (
-                board[self.row + 1][self.column + 2].piece == None
-                or board[self.row + 1][self.column + 2].piece.color != self.color
-            ):
-                moves.append((self.row + 1, self.column + 2))
-        if self.row + 2 < 8:
-            if self.column - 1 >= 0 and (
-                board[self.row + 2][self.column - 1].piece == None
-                or board[self.row + 2][self.column - 1].piece.color != self.color
-            ):
-                moves.append((self.row + 2, self.column - 1))
-            if self.column + 1 < 8 and (
-                board[self.row + 2][self.column + 1].piece == None
-                or board[self.row + 2][self.column + 1].piece.color != self.color
-            ):
-                moves.append((self.row + 2, self.column + 1))
-        return moves
-
-
-class Rook(Piece):
-    def findAllMoves(self, board):
-        moves = []
-        i, j = self.row - 1, self.column
-        while i >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i -= 1
-        i, j = self.row + 1, self.column
-        while i < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            i += 1
-        i, j = self.row, self.column - 1
-        while j >= 0:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            j -= 1
-        i, j = self.row, self.column + 1
-        while j < 8:
-            if board[i][j].piece != None:
-                if self.color != board[i][j].piece.color:
-                    moves.append((i, j))
-                break
-            moves.append((i, j))
-            j += 1
-        return moves
-
-
-class Pawn(Piece):
-    def findAllMoves(self, board):
-        moves = []
-        if self.color == "white":
-            if self.row == 6:
-                if (board[5][self.column].piece != None) or (
-                    board[4][self.column].piece != None
-                ):
-                    pass
-                else:
-                    moves.append((self.row - 2, self.column))
-
-            if self.row - 1 >= 0 and (board[self.row - 1][self.column].piece == None):
-                moves.append((self.row - 1, self.column))
-            if self.row - 1 >= 0:  # diagonal attack
-                if self.column + 1 < 8:
-                    if (
-                        board[self.row - 1][self.column + 1].piece != None
-                        and board[self.row - 1][self.column + 1].piece.color == "black"
-                    ):
-                        moves.append((self.row - 1, self.column + 1))
-                if self.column - 1 >= 0:
-                    if (
-                        board[self.row - 1][self.column - 1].piece != None
-                        and board[self.row - 1][self.column - 1].piece.color == "black"
-                    ):
-                        moves.append((self.row - 1, self.column - 1))
-        else:
-            if self.row == 1:
-                if (board[2][self.column].piece != None) or (
-                    board[3][self.column].piece != None
-                ):
-                    pass
-                else:
-                    moves.append((self.row + 2, self.column))
-
-            if self.row + 1 < 8 and (board[self.row + 1][self.column].piece == None):
-                moves.append((self.row + 1, self.column))
-            if self.row + 1 < 8:  # diagonal attack
-                if self.column + 1 < 8:
-                    if (
-                        board[self.row + 1][self.column + 1].piece != None
-                        and board[self.row + 1][self.column + 1].piece.color == "white"
-                    ):
-                        moves.append((self.row + 1, self.column + 1))
-                if self.column - 1 >= 0:
-                    if (
-                        board[self.row + 1][self.column - 1].piece != None
-                        and board[self.row + 1][self.column - 1].piece.color == "white"
-                    ):
-                        moves.append((self.row + 1, self.column - 1))
-
-        return moves
