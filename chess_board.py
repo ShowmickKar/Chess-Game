@@ -32,13 +32,12 @@ class ChessBoard:
             ]
             for i in range(8)
         ]
-        # self.current = None
-        self.black = Player("black")
-        self.white = Player("white")
         self.check = None
         self.winner = None
         self.check_alert = False
-        self.__total_moves = 0
+        self.black = Player("black")
+        self.white = Player("white")
+        self.winning_cause = "CHECKMATE"
 
     def place(self, current_position, new_position):
         pass
@@ -62,8 +61,8 @@ class ChessBoard:
                     selected = (cell.row, cell.column)
                     moves = board_cell.piece.moves
                     if selected in moves:  # move or capture the piece
+                        capture = False
                         board_cell.piece.move(board_cell, cell, self)
-                        self.__total_moves += 1
                         self.unselectCell()
                         self.white.switchTurn()
                         self.black.switchTurn()
@@ -92,8 +91,10 @@ class ChessBoard:
 
     def draw(self, window):
         if self.white.time <= 0:
+            self.winning_cause = "Time's Up"
             self.winner = "black"
         if self.black.time <= 0:
+            self.winning_cause = "Time's Up"
             self.winner = "white"
         turn = "white" if self.white.turn else "black"
         all_possible_moves = []
