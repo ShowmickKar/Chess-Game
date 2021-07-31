@@ -69,6 +69,10 @@ class Piece:
         Move the piece if it's a valid move and no possibility of checkmate
         look for castling
         """
+        capture = False
+        if new_cell.piece != None:
+            capture = True
+
         self.row, self.column = new_cell.row, new_cell.column
         new_cell.piece = self
         current_cell.piece = None
@@ -103,6 +107,13 @@ class Piece:
             grid.check_alert = True
             return
         grid.check = None
+
+        movement_sound = (
+            pygame.mixer.Sound("Assets/music/capture.wav")
+            if capture
+            else pygame.mixer.Sound("Assets/music/move.wav")
+        )
+        movement_sound.play()
 
     def render(self, window):
         window.blit(self.image, (self.column * 70 + 20, self.row * 70 + 18))
