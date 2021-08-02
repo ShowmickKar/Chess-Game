@@ -1,4 +1,8 @@
 from piece import Piece
+from queen import Queen
+from knight import Knight
+from bishop import Bishop
+from rook import Rook
 
 
 class Pawn(Piece):
@@ -54,3 +58,41 @@ class Pawn(Piece):
                         moves.append((self.row + 1, self.column - 1))
 
         return moves
+
+    def promote(self, board):
+        """
+        Promote the Pawn to Queen/Knight/Bishop/Rook
+        """
+
+        import pygame
+
+        run = True
+        color = self.color[0].upper()
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    pygame.quit()
+                if event.type == pygame.KEYDOWN:
+                    if chr(event.key) == "q":
+                        board[self.row][self.column].piece = Queen(
+                            self.row, self.column, color + "-q"
+                        )
+                        return
+                    elif chr(event.key) == "k":
+                        board[self.row][self.column].piece = Knight(
+                            self.row, self.column, color + "-k"
+                        )
+                        return
+                    elif chr(event.key) == "b":
+                        board[self.row][self.column].piece = Bishop(
+                            self.row, self.column, color + "-b"
+                        )
+                        return
+                    elif chr(event.key) == "r":
+                        board[self.row][self.column].piece = Rook(
+                            self.row, self.column, color + "-r"
+                        )
+                        return
+                    else:
+                        continue
