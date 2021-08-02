@@ -1,9 +1,11 @@
 import pygame
 import os
+from alert_popup import alert
 
 
 class Piece:
     def __init__(self, row, column, piece_info):
+        print(f"piece_info: {piece_info}")
         self.row, self.column = row, column
         self.color = "white" if piece_info[0] == "W" else "black"
         self.image = pygame.transform.scale(
@@ -76,9 +78,16 @@ class Piece:
         self.row, self.column = new_cell.row, new_cell.column
         new_cell.piece = self
         current_cell.piece = None
+
+        "First Handle Pawn Promotion/ En Passant if there's any"
+        if str(type(self)) == "<class 'pawn.Pawn'>":
+            if self.row == 0 or self.row == 7:
+                alert()  # Creating a pop up window
+                self.promote(board)  # promoting the Pawn
+
         """
         If the opposing player is in check, alert that here
-        """
+        # """
         all_attacking_positions = []
         opposing_kings_location = (-1, -1)
         opposing_player = "black" if self.color == "white" else "white"
