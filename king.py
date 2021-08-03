@@ -6,12 +6,6 @@ class King(Piece):
         super().__init__(row, column, piece_info)
         self.moved = False  # required for castling
 
-    def isCastlingAvailable(self):
-        pass
-
-    def isChecked(self):
-        pass
-
     def findAllMoves(self, board):  # also check for castling and checks
         moves = []
         if self.row - 1 >= 0:
@@ -53,7 +47,13 @@ class King(Piece):
             """
             if piece == None or piece.color != self.color:
                 final_moves.append(move)
-        # print(self.row, self.column)
-        # print(final_moves)
-
+        if not self.moved:
+            castling_cell = board[self.row][self.column + 3]
+            if (
+                castling_cell.piece != None
+                and str(type(castling_cell.piece)) == "<class 'rook.Rook'>"
+                and board[self.row][self.column + 1].piece == None
+                and board[self.row][self.column + 2].piece == None
+            ):
+                final_moves.append((self.row, self.column + 2))
         return final_moves
