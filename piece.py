@@ -75,9 +75,26 @@ class Piece:
         if new_cell.piece != None:
             capture = True
 
+        # First handle castling if there's any
+        if (
+            str(type(self)) == "<class 'king.King'>"
+            and abs(current_cell.column - new_cell.column) > 1
+        ):  # Castle
+            row = 7 if self.color == "white" else 0
+            rook = board[row][7].piece
+            board[row][7].piece.column -= 2
+            board[row][5].piece = rook
+            board[row][7].piece = None
+
         self.row, self.column = new_cell.row, new_cell.column
         new_cell.piece = self
         current_cell.piece = None
+
+        if (
+            str(type(self)) == "<class 'king.King'>"
+            or str(type(self)) == "<class 'rook.Rook'>"
+        ):
+            self.moved = True
 
         "First Handle Pawn Promotion/ En Passant if there's any"
         if str(type(self)) == "<class 'pawn.Pawn'>":
@@ -87,7 +104,7 @@ class Piece:
 
         """
         If the opposing player is in check, alert that here
-        # """
+        """
         all_attacking_positions = []
         opposing_kings_location = (-1, -1)
         opposing_player = "black" if self.color == "white" else "white"
