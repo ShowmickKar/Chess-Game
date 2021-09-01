@@ -5,11 +5,13 @@ It took me approximately two weeks to build the game. Coding up the movement log
 
 The game is fully functioning with a few exceptions.
 
-I haven't gotten around to implementing the "Pawn Enpassant" movement yet. I Will do that once I get some free time. Other than that Castling, Checkmate, Stalemate, Pawn Promotion all works just fine. I sort of rushed during the last part where I implemented pawn promotion and casting. That's where the code got quite messy. Besides, I tried to code everything in an extensible, maintainable, and easily debuggable way.
+I haven't gotten around to implementing the "Pawn Enpassant" movement yet. I Will do that once I get some free time. Other than that Castling, Checkmate, Stalemate, Pawn Promotion all works just fine. I sort of rushed during the last part where I implemented pawn promotion and casting. That's where the code got quite messy. Besides that, I tried to code everything in an extensible, maintainable, and easily debuggable way.
 
 My original plan was to make the game online multiplayer. But since I have little to no experience with sockets and networking I have decided to push back the networking part for a while until I get some free time. 
 
-To run the code on your computer, clone the repository using the terminal command:
+## To run the code on your computer 
+
+Clone the repository using the terminal command:
 <br>
 ``
 git clone https://github.com/ShowmickKar/Chess-Game.git
