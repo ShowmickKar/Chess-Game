@@ -1,5 +1,5 @@
 # Online-Multiplayer-Chess-Game
-## So I was experiencing severe muscle ache and fever after taking the first dose of the Moderna vaccine at midnight. After taking several futile attempts to fall asleep I decided to work on something fun. So there it is! A fully functioning chess game!
+## So I was experiencing severe muscle ache and fever during the night after taking the first dose of the Moderna vaccine that day. After taking several futile attempts to fall asleep I decided to work on something fun. So there it is! A fully functioning chess game!
 
 It took me approximately two weeks to build the game. Coding up the movement logic for individual pieces was an obvious challenge. However, since it was my first big project which I built entirely from scratch without referring to any tutorial, the BIGGEST CHALLENGE for me was architecting the codebase(which consists of 800+ lines of code) and make everything work together as a whole.
 
