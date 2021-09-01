@@ -9,6 +9,18 @@ First of all, I haven't gotten around to implementing the "Pawn Enpassant" movem
 
 My original plan was to make the game online multiplayer. But since I have little to no experience with sockets and networking I have decided to push back the networking part for a while until I get some free time. 
 
+To run the code on your computer, clone the repository using the terminal command:
+<br>
+``
+git clone https://github.com/ShowmickKar/Chess-Game.git
+``
+
+If you don't have Pygame installed on your computer, install it via the terminal command
+<br>
+``
+pip install pygame
+``
+
 Here's e demo of the game.
 
 Enjoy!
