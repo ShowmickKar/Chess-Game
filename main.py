@@ -77,7 +77,7 @@ def main():
                 if event.button == 3:
                     board.unselectCell()
             if event.type == pygame.KEYDOWN:
-                if board.winner != None:
+                if board.winner != None or event.key == pygame.K_SPACE:
                     """
                     Restart the Game
                     """
