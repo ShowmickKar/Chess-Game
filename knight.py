@@ -1,6 +1,9 @@
 from piece import Piece
 
 
+""" 
+Issue: Knight moves have some rare bugs. Not sure if thats due the code logic of the Knight class or its originating from something else.
+"""
 class Knight(Piece):
     def findAllMoves(self, board):
         moves = []

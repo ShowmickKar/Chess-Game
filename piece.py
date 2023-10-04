@@ -10,7 +10,7 @@ class Piece:
         self.color = "white" if piece_info[0] == "W" else "black"
         self.image = pygame.transform.scale(
             pygame.image.load(os.path.join("Assets", piece_info + ".svg")), (70, 70)
-        )
+        ) # Issue: this hard coded piece size needs to be fixed. Piece size should depend of the board cell size.
         self.moves = []
 
     def showAllMoves(self, window, grid):
