@@ -36,13 +36,13 @@ class BoardCell:
                 self.color = WHITE
 
     def __assignPiece(self, contains):
-        if contains[2] == "K":
+        if contains[2] == "k":
             return King(self.row, self.column, contains)
         elif contains[2] == "q":
             return Queen(self.row, self.column, contains)
         elif contains[2] == "b":
             return Bishop(self.row, self.column, contains)
-        elif contains[2] == "k":
+        elif contains[2] == "n":
             return Knight(self.row, self.column, contains)
         elif contains[2] == "r":
             return Rook(self.row, self.column, contains)

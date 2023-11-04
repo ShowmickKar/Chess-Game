@@ -10,14 +10,14 @@ font = pygame.font.SysFont("Sans Serif", 30)
 
 class ChessBoard:
     board_blueprint = [
-        ["B-r", "B-k", "B-b", "B-q", "B-K", "B-b", "B-k", "B-r"],
+        ["B-r", "B-n", "B-b", "B-q", "B-k", "B-b", "B-n", "B-r"],
         ["B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p", "B-p"],
         ["", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", ""],
         ["", "", "", "", "", "", "", ""],
         ["W-p", "W-p", "W-p", "W-p", "W-p", "W-p", "W-p", "W-p"],
-        ["W-r", "W-k", "W-b", "W-q", "W-K", "W-b", "W-k", "W-r"],
+        ["W-r", "W-n", "W-b", "W-q", "W-k", "W-b", "W-n", "W-r"],
     ]
 
     HORIZONTAL_MAPPING = [chr(i) for i in range(ord("a"), ord("h") + 1)]
