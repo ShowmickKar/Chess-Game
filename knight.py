@@ -4,6 +4,11 @@ from piece import Piece
 """ 
 Issue: Knight moves have some rare bugs. Not sure if thats due the code logic of the Knight class or its originating from something else.
 """
+
+"""
+This bug is because the knight and king svgs are both named W-k.svg and B-k.svg
+"""
+
 class Knight(Piece):
     def findAllMoves(self, board):
         moves = []
